@@ -2,6 +2,7 @@ package com.attendance.entity;
 
 public enum Role {
     EMPLOYEE,
-    MANAGER,
+    REPORTING_MANAGER,
+    PRINCIPAL_LEAD,
     ADMIN
 }

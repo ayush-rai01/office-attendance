@@ -11,11 +11,16 @@ export interface User {
   id: number;
   fullName: string;
   email: string;
+  password?: string;
   employeeCode?: string;
   department?: string;
-  role: 'EMPLOYEE' | 'MANAGER' | 'ADMIN';
+  role: 'EMPLOYEE' | 'REPORTING_MANAGER' | 'PRINCIPAL_LEAD' | 'ADMIN';
   office?: Office;
   reportingManager?: User;
+  casualLeaveBalance?: number;
+  sickLeaveBalance?: number;
+  earnedLeaveBalance?: number;
+  isProbation?: boolean;
 }
 
 export type PunchType = 'IN' | 'OUT';

@@ -33,7 +33,9 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="user-switcher">
             {currentUser?.role === 'ADMIN' ? (
               <Shield size={16} color="#dc2626" />
-            ) : currentUser?.role === 'MANAGER' ? (
+            ) : currentUser?.role === 'REPORTING_MANAGER' ||
+              currentUser?.role === 'PRINCIPAL_LEAD' ||
+              (currentUser?.role as any) === 'MANAGER' ? (
               <Briefcase size={16} color="#16a34a" />
             ) : (
               <UserIcon size={16} color="#2563eb" />

@@ -26,6 +26,14 @@ public interface AttendanceLogRepository extends JpaRepository<AttendanceLog, Lo
             LocalDateTime start, LocalDateTime end
     );
 
+    // Find punches for team reportees under a Reporting Manager or Principal Lead
+    @Query("SELECT a FROM AttendanceLog a WHERE (a.user.reportingManager.id = :managerId OR a.user.reportingManager.reportingManager.id = :managerId) AND a.punchTime BETWEEN :start AND :end ORDER BY a.punchTime DESC")
+    List<AttendanceLog> findTeamTodayLogs(
+            @Param("managerId") Long managerId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
     // Find user's logs between dates for monthly report
     @Query("SELECT a FROM AttendanceLog a WHERE a.user.id = :userId AND a.punchTime BETWEEN :start AND :end ORDER BY a.punchTime ASC")
     List<AttendanceLog> findUserAttendanceBetween(

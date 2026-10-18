@@ -81,7 +81,11 @@ export function App() {
     );
   }
 
-  const isManagerOrAdmin = currentUser.role === 'MANAGER' || currentUser.role === 'ADMIN';
+  const isManagerOrAdmin =
+    currentUser.role === 'REPORTING_MANAGER' ||
+    currentUser.role === 'PRINCIPAL_LEAD' ||
+    currentUser.role === 'ADMIN' ||
+    (currentUser.role as any) === 'MANAGER';
   const isAdmin = currentUser.role === 'ADMIN';
 
   return (

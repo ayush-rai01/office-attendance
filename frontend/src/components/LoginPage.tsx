@@ -156,11 +156,23 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="button"
               onClick={() => handleQuickLogin('john.doe@company.com', 'Password123')}
               className="btn btn-sm"
-              style={{ background: '#f1f5f9', color: '#1e293b', justifyContent: 'flex-start', padding: '0.6rem 0.85rem' }}
+              style={{ background: '#f1f5f9', color: '#1e293b', justifyContent: 'flex-start', padding: '0.55rem 0.85rem' }}
             >
               <UserCheck size={16} color="#2563eb" />
               <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
-                <strong>John Doe</strong> <span style={{ fontSize: '0.75rem', color: '#64748b' }}>(Employee)</span>
+                <strong>John Doe</strong> <span style={{ fontSize: '0.75rem', color: '#64748b' }}>(Employee - Confirmed)</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('intern@company.com', 'Password123')}
+              className="btn btn-sm"
+              style={{ background: '#fef2f2', color: '#991b1b', border: '1px solid #fee2e2', justifyContent: 'flex-start', padding: '0.55rem 0.85rem' }}
+            >
+              <UserCheck size={16} color="#dc2626" />
+              <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                <strong>Emily Watson</strong> <span style={{ fontSize: '0.75rem', color: '#b91c1c' }}>(Probation Employee - 1 CL)</span>
               </div>
             </button>
 
@@ -168,7 +180,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="button"
               onClick={() => handleQuickLogin('manager@company.com', 'Manager123')}
               className="btn btn-sm"
-              style={{ background: '#f1f5f9', color: '#1e293b', justifyContent: 'flex-start', padding: '0.6rem 0.85rem' }}
+              style={{ background: '#f1f5f9', color: '#1e293b', justifyContent: 'flex-start', padding: '0.55rem 0.85rem' }}
             >
               <UserCheck size={16} color="#16a34a" />
               <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
@@ -178,13 +190,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
             <button
               type="button"
+              onClick={() => handleQuickLogin('pl@company.com', 'Lead123')}
+              className="btn btn-sm"
+              style={{ background: '#f5f3ff', color: '#4c1d95', border: '1px solid #ede9fe', justifyContent: 'flex-start', padding: '0.55rem 0.85rem' }}
+            >
+              <Shield size={16} color="#7c3aed" />
+              <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                <strong>David Vance</strong> <span style={{ fontSize: '0.75rem', color: '#6d28d9' }}>(Principal Lead - Skip-Level)</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
               onClick={() => handleQuickLogin('admin@company.com', 'Admin123')}
               className="btn btn-sm"
-              style={{ background: '#f1f5f9', color: '#1e293b', justifyContent: 'flex-start', padding: '0.6rem 0.85rem' }}
+              style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid #cbd5e1', justifyContent: 'flex-start', padding: '0.55rem 0.85rem' }}
             >
-              <Shield size={16} color="#dc2626" />
+              <Shield size={16} color="#0f172a" />
               <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
-                <strong>HR Admin</strong> <span style={{ fontSize: '0.75rem', color: '#64748b' }}>(Full HR Admin Access)</span>
+                <strong>HR Admin</strong> <span style={{ fontSize: '0.75rem', color: '#64748b' }}>(Full HR Management)</span>
               </div>
             </button>
           </div>

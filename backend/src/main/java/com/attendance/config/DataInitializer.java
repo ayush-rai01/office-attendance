@@ -42,23 +42,71 @@ public class DataInitializer implements CommandLineRunner {
             office = officeRepository.findAll().get(0);
         }
 
-        // 1. Create or Find Reporting Manager (Sarah Connor)
-        User manager = userRepository.findByEmail("manager@company.com").orElse(null);
-        if (manager == null) {
-            manager = User.builder()
+        // 1. HR Admin
+        User admin = userRepository.findByEmail("admin@company.com").orElse(null);
+        if (admin == null) {
+            admin = User.builder()
+                    .fullName("HR Admin")
+                    .email("admin@company.com")
+                    .password("Admin123")
+                    .employeeCode("ADM001")
+                    .department("Human Resources")
+                    .role(Role.ADMIN)
+                    .office(office)
+                    .casualLeaveBalance(20)
+                    .sickLeaveBalance(12)
+                    .earnedLeaveBalance(20)
+                    .isProbation(false)
+                    .build();
+            userRepository.save(admin);
+            log.info("HR Admin created: ID={}, Email={}", admin.getId(), admin.getEmail());
+        }
+
+        // 2. Principal Lead (PL) - David Vance
+        User pl = userRepository.findByEmail("pl@company.com").orElse(null);
+        if (pl == null) {
+            pl = User.builder()
+                    .fullName("David Vance (Principal Lead)")
+                    .email("pl@company.com")
+                    .password("Lead123")
+                    .employeeCode("PL001")
+                    .department("Engineering")
+                    .role(Role.PRINCIPAL_LEAD)
+                    .office(office)
+                    .casualLeaveBalance(15)
+                    .sickLeaveBalance(10)
+                    .earnedLeaveBalance(20)
+                    .isProbation(false)
+                    .build();
+            pl = userRepository.save(pl);
+            log.info("Principal Lead created: ID={}, Email={}", pl.getId(), pl.getEmail());
+        }
+
+        // 3. Reporting Manager 1 (RM) - Sarah Connor (reports to David Vance)
+        User rm1 = userRepository.findByEmail("manager@company.com").orElse(null);
+        if (rm1 == null) {
+            rm1 = User.builder()
                     .fullName("Sarah Connor (Reporting Manager)")
                     .email("manager@company.com")
                     .password("Manager123")
                     .employeeCode("MGR001")
                     .department("Engineering")
-                    .role(Role.MANAGER)
+                    .role(Role.REPORTING_MANAGER)
                     .office(office)
+                    .reportingManager(pl)
+                    .casualLeaveBalance(14)
+                    .sickLeaveBalance(10)
+                    .earnedLeaveBalance(18)
+                    .isProbation(false)
                     .build();
-            manager = userRepository.save(manager);
-            log.info("Reporting Manager created: ID={}, Email={}", manager.getId(), manager.getEmail());
+            rm1 = userRepository.save(rm1);
+        } else {
+            rm1.setRole(Role.REPORTING_MANAGER);
+            rm1.setReportingManager(pl);
+            userRepository.save(rm1);
         }
 
-        // 2. Create or Find Employee (John Doe) and assign to manager
+        // 4. Confirmed Employee - John Doe (reports to Sarah Connor)
         User employee = userRepository.findByEmail("john.doe@company.com").orElse(null);
         if (employee == null) {
             employee = User.builder()
@@ -69,30 +117,44 @@ public class DataInitializer implements CommandLineRunner {
                     .department("Engineering")
                     .role(Role.EMPLOYEE)
                     .office(office)
-                    .reportingManager(manager)
+                    .reportingManager(rm1)
+                    .casualLeaveBalance(12)
+                    .sickLeaveBalance(8)
+                    .earnedLeaveBalance(15)
+                    .isProbation(false)
                     .build();
             userRepository.save(employee);
-        } else if (employee.getReportingManager() == null) {
-            employee.setReportingManager(manager);
+        } else {
+            employee.setRole(Role.EMPLOYEE);
+            employee.setReportingManager(rm1);
+            if (employee.getCasualLeaveBalance() == null) employee.setCasualLeaveBalance(12);
+            if (employee.getSickLeaveBalance() == null) employee.setSickLeaveBalance(8);
+            if (employee.getEarnedLeaveBalance() == null) employee.setEarnedLeaveBalance(15);
             userRepository.save(employee);
         }
 
-        // 3. Create or Find HR Admin
-        if (userRepository.findByEmail("admin@company.com").isEmpty()) {
-            User admin = User.builder()
-                    .fullName("HR Admin")
-                    .email("admin@company.com")
-                    .password("Admin123")
-                    .employeeCode("ADM001")
-                    .department("Human Resources")
-                    .role(Role.ADMIN)
+        // 5. Probation Employee - Emily Watson (reports to Sarah Connor, only 1 CL!)
+        User probationEmp = userRepository.findByEmail("intern@company.com").orElse(null);
+        if (probationEmp == null) {
+            probationEmp = User.builder()
+                    .fullName("Emily Watson (Probation)")
+                    .email("intern@company.com")
+                    .password("Password123")
+                    .employeeCode("EMP002")
+                    .department("Engineering")
+                    .role(Role.EMPLOYEE)
                     .office(office)
+                    .reportingManager(rm1)
+                    .casualLeaveBalance(1) // Only 1 CL during probation
+                    .sickLeaveBalance(0)
+                    .earnedLeaveBalance(0)
+                    .isProbation(true)
                     .build();
-            userRepository.save(admin);
-            log.info("HR Admin created: ID={}, Email={}", admin.getId(), admin.getEmail());
+            userRepository.save(probationEmp);
+            log.info("Probation Employee created: ID={}, Email={}", probationEmp.getId(), probationEmp.getEmail());
         }
 
-        // 4. Seed 2026 Company Holiday Calendar with Government Flag
+        // 6. Seed 2026 Company Holiday Calendar with Government Flag
         if (holidayRepository.count() == 0) {
             List<Holiday> holidays = List.of(
                     Holiday.builder().name("New Year's Day").holidayDate(LocalDate.of(2026, 1, 1)).dayOfWeek("Thursday").holidayType("National Holiday").isGovernmentHoliday(true).description("Celebration of the New Year").build(),
@@ -109,14 +171,6 @@ public class DataInitializer implements CommandLineRunner {
             );
             holidayRepository.saveAll(holidays);
             log.info("Seeded {} Company Holidays for 2026", holidays.size());
-        } else {
-            // Update government holiday flags for existing records
-            holidayRepository.findAll().forEach(h -> {
-                if ("National Holiday".equalsIgnoreCase(h.getHolidayType()) && !Boolean.TRUE.equals(h.getIsGovernmentHoliday())) {
-                    h.setIsGovernmentHoliday(true);
-                    holidayRepository.save(h);
-                }
-            });
         }
     }
 }

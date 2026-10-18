@@ -17,6 +17,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody RegisterUserRequest request) {
+        return ResponseEntity.ok(userService.registerUser(request));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterUserRequest request) {
         return ResponseEntity.ok(userService.registerUser(request));
@@ -30,5 +35,10 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody RegisterUserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 }

@@ -44,6 +44,11 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.getAllTodayLogs());
     }
 
+    @GetMapping("/team-today/{managerId}")
+    public ResponseEntity<List<AttendanceLog>> getTeamTodayLogs(@PathVariable Long managerId) {
+        return ResponseEntity.ok(attendanceService.getTeamTodayLogs(managerId));
+    }
+
     @GetMapping("/history/{userId}")
     public ResponseEntity<List<AttendanceLog>> getUserHistory(
             @PathVariable Long userId,

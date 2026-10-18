@@ -198,6 +198,12 @@ public class AttendanceService {
         return attendanceLogRepository.findByPunchTimeBetweenOrderByPunchTimeDesc(startOfDay, endOfDay);
     }
 
+    public List<AttendanceLog> getTeamTodayLogs(Long managerId) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+        return attendanceLogRepository.findTeamTodayLogs(managerId, startOfDay, endOfDay);
+    }
+
     public List<AttendanceLog> getUserAttendanceHistory(Long userId, LocalDate from, LocalDate to) {
         LocalDateTime start = from.atStartOfDay();
         LocalDateTime end = to.atTime(LocalTime.MAX);

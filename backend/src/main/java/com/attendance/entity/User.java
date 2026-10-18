@@ -33,7 +33,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role; // EMPLOYEE, MANAGER, ADMIN
+    private Role role; // EMPLOYEE, REPORTING_MANAGER, PRINCIPAL_LEAD, ADMIN
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "office_id")
@@ -43,11 +43,27 @@ public class User {
     @JoinColumn(name = "manager_id")
     private User reportingManager;
 
+    @Builder.Default
+    private Integer casualLeaveBalance = 12;
+
+    @Builder.Default
+    private Integer sickLeaveBalance = 8;
+
+    @Builder.Default
+    private Integer earnedLeaveBalance = 15;
+
+    @Builder.Default
+    private Boolean isProbation = false;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.casualLeaveBalance == null) this.casualLeaveBalance = 12;
+        if (this.sickLeaveBalance == null) this.sickLeaveBalance = 8;
+        if (this.earnedLeaveBalance == null) this.earnedLeaveBalance = 15;
+        if (this.isProbation == null) this.isProbation = false;
     }
 }

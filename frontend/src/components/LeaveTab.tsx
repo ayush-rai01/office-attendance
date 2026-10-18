@@ -75,22 +75,47 @@ export const LeaveTab: React.FC<LeaveTabProps> = ({ currentUser }) => {
         <div className="stat-card">
           <span className="stat-label">Casual Leave</span>
           <span className="stat-value" style={{ color: '#2563eb' }}>
-            10 <span style={{ fontSize: '0.85rem', color: '#64748b' }}>days available</span>
+            {currentUser.casualLeaveBalance ?? 12}{' '}
+            <span style={{ fontSize: '0.85rem', color: '#64748b' }}>days available</span>
           </span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Sick Leave</span>
           <span className="stat-value" style={{ color: '#16a34a' }}>
-            8 <span style={{ fontSize: '0.85rem', color: '#64748b' }}>days available</span>
+            {currentUser.sickLeaveBalance ?? 8}{' '}
+            <span style={{ fontSize: '0.85rem', color: '#64748b' }}>days available</span>
           </span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Earned Leave</span>
           <span className="stat-value" style={{ color: '#d97706' }}>
-            15 <span style={{ fontSize: '0.85rem', color: '#64748b' }}>days available</span>
+            {currentUser.earnedLeaveBalance ?? 15}{' '}
+            <span style={{ fontSize: '0.85rem', color: '#64748b' }}>days available</span>
           </span>
         </div>
       </div>
+
+      {/* Probation Period Badge if Applicable */}
+      {currentUser.isProbation && (
+        <div
+          style={{
+            background: '#fef3c7',
+            border: '1px solid #fde68a',
+            borderRadius: '12px',
+            padding: '0.85rem 1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            marginBottom: '1.25rem',
+            color: '#92400e',
+          }}
+        >
+          <AlertCircle size={20} color="#b45309" />
+          <div style={{ fontSize: '0.85rem' }}>
+            <strong>Probation Period Policy:</strong> You are currently on probation. As per company policy, you are allotted <strong>1 Casual Leave (CL)</strong> during this period. Full leave quotas will unlock upon confirmation.
+          </div>
+        </div>
+      )}
 
       {/* Reporting Manager Routing Info Strip */}
       <div

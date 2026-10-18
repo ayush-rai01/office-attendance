@@ -79,6 +79,21 @@ export const attendanceApi = {
     return res.data;
   },
 
+  createUser: async (data: any): Promise<User> => {
+    const res = await api.post<User>('/users', data);
+    return res.data;
+  },
+
+  updateUser: async (id: number, data: any): Promise<User> => {
+    const res = await api.put<User>(`/users/${id}`, data);
+    return res.data;
+  },
+
+  getTeamTodayLogs: async (managerId: number): Promise<AttendanceLog[]> => {
+    const res = await api.get<AttendanceLog[]>(`/attendance/team-today/${managerId}`);
+    return res.data;
+  },
+
   // Offices
   getAllOffices: async (): Promise<Office[]> => {
     const res = await api.get<Office[]>('/offices');

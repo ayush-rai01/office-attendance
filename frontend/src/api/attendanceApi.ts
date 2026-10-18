@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type {
   AttendanceLog,
+  Holiday,
   LeaveRequest,
   LeaveStatus,
   LeaveType,
@@ -21,6 +22,13 @@ const api = axios.create({
 });
 
 export const attendanceApi = {
+  // Authentication
+  login: async (email: string, password: string): Promise<User> => {
+    const res = await api.post<User>('/auth/login', { email, password });
+    return res.data;
+  },
+
+  // Attendance
   punchIn: async (data: {
     userId: number;
     latitude?: number;
@@ -60,6 +68,7 @@ export const attendanceApi = {
     return res.data;
   },
 
+  // Users
   getAllUsers: async (): Promise<User[]> => {
     const res = await api.get<User[]>('/users');
     return res.data;
@@ -70,11 +79,19 @@ export const attendanceApi = {
     return res.data;
   },
 
+  // Offices
   getAllOffices: async (): Promise<Office[]> => {
     const res = await api.get<Office[]>('/offices');
     return res.data;
   },
 
+  // Holidays
+  getAllHolidays: async (): Promise<Holiday[]> => {
+    const res = await api.get<Holiday[]>('/holidays');
+    return res.data;
+  },
+
+  // Leaves
   applyLeave: async (data: {
     userId: number;
     leaveType: LeaveType;
@@ -93,6 +110,16 @@ export const attendanceApi = {
 
   getPendingLeaves: async (): Promise<LeaveRequest[]> => {
     const res = await api.get<LeaveRequest[]>('/leaves/pending');
+    return res.data;
+  },
+
+  getLeavesForManager: async (managerId: number): Promise<LeaveRequest[]> => {
+    const res = await api.get<LeaveRequest[]>(`/leaves/manager/${managerId}`);
+    return res.data;
+  },
+
+  getPendingLeavesForManager: async (managerId: number): Promise<LeaveRequest[]> => {
+    const res = await api.get<LeaveRequest[]>(`/leaves/manager/${managerId}/pending`);
     return res.data;
   },
 

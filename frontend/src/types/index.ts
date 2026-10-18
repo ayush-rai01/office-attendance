@@ -15,6 +15,7 @@ export interface User {
   department?: string;
   role: 'EMPLOYEE' | 'MANAGER' | 'ADMIN';
   office?: Office;
+  reportingManager?: User;
 }
 
 export type PunchType = 'IN' | 'OUT';
@@ -66,4 +67,13 @@ export interface LeaveRequest {
   status: LeaveStatus;
   managerRemarks?: string;
   appliedAt: string;
+}
+
+export interface Holiday {
+  id: number;
+  name: string;
+  holidayDate: string;
+  dayOfWeek: string;
+  holidayType: string;
+  description?: string;
 }

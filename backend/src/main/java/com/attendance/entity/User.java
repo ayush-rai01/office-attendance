@@ -39,6 +39,10 @@ public class User {
     @JoinColumn(name = "office_id")
     private Office office;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "manager_id")
+    private User reportingManager;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

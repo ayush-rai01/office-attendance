@@ -48,6 +48,14 @@ public class LeaveService {
         return leaveRequestRepository.findByStatusOrderByAppliedAtDesc(LeaveStatus.PENDING);
     }
 
+    public List<LeaveRequest> getLeavesForManager(Long managerId) {
+        return leaveRequestRepository.findByUserReportingManagerIdOrderByAppliedAtDesc(managerId);
+    }
+
+    public List<LeaveRequest> getPendingLeavesForManager(Long managerId) {
+        return leaveRequestRepository.findByUserReportingManagerIdAndStatusOrderByAppliedAtDesc(managerId, LeaveStatus.PENDING);
+    }
+
     @Transactional
     public LeaveRequest updateLeaveStatus(Long leaveId, LeaveStatus status, String managerRemarks) {
         LeaveRequest leave = leaveRequestRepository.findById(leaveId)

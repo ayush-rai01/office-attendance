@@ -33,6 +33,16 @@ public class LeaveController {
         return ResponseEntity.ok(leaveService.getPendingLeaves());
     }
 
+    @GetMapping("/manager/{managerId}")
+    public ResponseEntity<List<LeaveRequest>> getLeavesForManager(@PathVariable Long managerId) {
+        return ResponseEntity.ok(leaveService.getLeavesForManager(managerId));
+    }
+
+    @GetMapping("/manager/{managerId}/pending")
+    public ResponseEntity<List<LeaveRequest>> getPendingLeavesForManager(@PathVariable Long managerId) {
+        return ResponseEntity.ok(leaveService.getPendingLeavesForManager(managerId));
+    }
+
     @PutMapping("/{leaveId}/status")
     public ResponseEntity<LeaveRequest> updateLeaveStatus(
             @PathVariable Long leaveId,

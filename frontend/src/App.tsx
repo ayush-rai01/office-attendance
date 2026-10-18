@@ -4,16 +4,29 @@ import { attendanceApi } from './api/attendanceApi';
 import { Header } from './components/Header';
 import { PunchTab } from './components/PunchTab';
 import { LeaveTab } from './components/LeaveTab';
+import { HolidayTab } from './components/HolidayTab';
+import { ManagerApprovalsTab } from './components/ManagerApprovalsTab';
 import { AdminTab } from './components/AdminTab';
-import { Clock, Calendar, Shield, AlertCircle } from 'lucide-react';
+import { LoginPage } from './components/LoginPage';
+import { Clock, Calendar, Shield, Sparkles, UserCheck, AlertCircle } from 'lucide-react';
 
-type Tab = 'PUNCH' | 'LEAVE' | 'ADMIN';
+type Tab = 'PUNCH' | 'LEAVE' | 'HOLIDAYS' | 'APPROVALS' | 'ADMIN';
 
 export function App() {
   const [users, setUsers] = useState<User[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('auth_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
   const [activeTab, setActiveTab] = useState<Tab>('PUNCH');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadUsers = async () => {
@@ -22,9 +35,14 @@ export function App() {
       setError(null);
       const data = await attendanceApi.getAllUsers();
       setUsers(data);
-      if (data.length > 0 && !currentUser) {
-        const defaultUser = data.find((u) => u.role === 'EMPLOYEE') || data[0];
-        setCurrentUser(defaultUser);
+
+      // If currentUser is already set from localStorage, sync with fresh DB data
+      if (currentUser) {
+        const freshUser = data.find((u) => u.id === currentUser.id);
+        if (freshUser) {
+          setCurrentUser(freshUser);
+          localStorage.setItem('auth_user', JSON.stringify(freshUser));
+        }
       }
     } catch (err: any) {
       console.error('Error connecting to backend', err);
@@ -40,12 +58,40 @@ export function App() {
     loadUsers();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('auth_user');
+    setCurrentUser(null);
+    setActiveTab('PUNCH');
+  };
+
+  const handleSelectUser = (user: User) => {
+    setCurrentUser(user);
+    localStorage.setItem('auth_user', JSON.stringify(user));
+  };
+
+  // If not logged in, render the Login Screen
+  if (!currentUser) {
+    return (
+      <LoginPage
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          loadUsers();
+        }}
+      />
+    );
+  }
+
+  const isManagerOrAdmin = currentUser.role === 'MANAGER' || currentUser.role === 'ADMIN';
+  const isAdmin = currentUser.role === 'ADMIN';
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Top Navbar */}
       <Header
         currentUser={currentUser}
         users={users}
-        onSelectUser={(user) => setCurrentUser(user)}
+        onSelectUser={handleSelectUser}
+        onLogout={handleLogout}
       />
 
       <main className="container" style={{ flex: 1 }}>
@@ -58,19 +104,20 @@ export function App() {
           </div>
         )}
 
-        {loading ? (
+        {loading && users.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: '#64748b' }}>
             Loading attendance system...
           </div>
         ) : (
           <>
+            {/* Navigation Tabs - greytHR Sections */}
             <nav className="nav-tabs">
               <button
                 onClick={() => setActiveTab('PUNCH')}
                 className={`tab-btn ${activeTab === 'PUNCH' ? 'active' : ''}`}
               >
                 <Clock size={18} />
-                <span>Clock In / Out</span>
+                <span>Attendance (Punch)</span>
               </button>
 
               <button
@@ -78,27 +125,54 @@ export function App() {
                 className={`tab-btn ${activeTab === 'LEAVE' ? 'active' : ''}`}
               >
                 <Calendar size={18} />
-                <span>Leaves & Time Off</span>
+                <span>Leave & Time Off</span>
               </button>
 
               <button
-                onClick={() => setActiveTab('ADMIN')}
-                className={`tab-btn ${activeTab === 'ADMIN' ? 'active' : ''}`}
+                onClick={() => setActiveTab('HOLIDAYS')}
+                className={`tab-btn ${activeTab === 'HOLIDAYS' ? 'active' : ''}`}
               >
-                <Shield size={18} />
-                <span>Admin & Approvals</span>
+                <Sparkles size={18} />
+                <span>Holiday Calendar</span>
               </button>
+
+              {/* Team Approvals Tab for Reporting Managers and Admins */}
+              {isManagerOrAdmin && (
+                <button
+                  onClick={() => setActiveTab('APPROVALS')}
+                  className={`tab-btn ${activeTab === 'APPROVALS' ? 'active' : ''}`}
+                >
+                  <UserCheck size={18} />
+                  <span>Team Approvals (RM)</span>
+                </button>
+              )}
+
+              {/* Full HR Admin Dashboard Tab for HR Admin */}
+              {isAdmin && (
+                <button
+                  onClick={() => setActiveTab('ADMIN')}
+                  className={`tab-btn ${activeTab === 'ADMIN' ? 'active' : ''}`}
+                >
+                  <Shield size={18} />
+                  <span>HR Administration</span>
+                </button>
+              )}
             </nav>
 
-            {currentUser && (
-              <>
-                {activeTab === 'PUNCH' && (
-                  <PunchTab currentUser={currentUser} onRefresh={loadUsers} />
-                )}
-                {activeTab === 'LEAVE' && <LeaveTab currentUser={currentUser} />}
-                {activeTab === 'ADMIN' && <AdminTab />}
-              </>
+            {/* Render Selected View */}
+            {activeTab === 'PUNCH' && (
+              <PunchTab currentUser={currentUser} onRefresh={loadUsers} />
             )}
+
+            {activeTab === 'LEAVE' && <LeaveTab currentUser={currentUser} />}
+
+            {activeTab === 'HOLIDAYS' && <HolidayTab />}
+
+            {activeTab === 'APPROVALS' && isManagerOrAdmin && (
+              <ManagerApprovalsTab currentUser={currentUser} />
+            )}
+
+            {activeTab === 'ADMIN' && isAdmin && <AdminTab />}
           </>
         )}
       </main>

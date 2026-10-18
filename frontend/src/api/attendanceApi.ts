@@ -91,6 +91,21 @@ export const attendanceApi = {
     return res.data;
   },
 
+  createHoliday: async (data: Partial<Holiday>): Promise<Holiday> => {
+    const res = await api.post<Holiday>('/holidays', data);
+    return res.data;
+  },
+
+  updateHoliday: async (id: number, data: Partial<Holiday>): Promise<Holiday> => {
+    const res = await api.put<Holiday>(`/holidays/${id}`, data);
+    return res.data;
+  },
+
+  deleteHoliday: async (id: number): Promise<{ message: string }> => {
+    const res = await api.delete<{ message: string }>(`/holidays/${id}`);
+    return res.data;
+  },
+
   // Leaves
   applyLeave: async (data: {
     userId: number;

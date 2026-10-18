@@ -92,23 +92,31 @@ public class DataInitializer implements CommandLineRunner {
             log.info("HR Admin created: ID={}, Email={}", admin.getId(), admin.getEmail());
         }
 
-        // 4. Seed 2026 Company Holiday Calendar
+        // 4. Seed 2026 Company Holiday Calendar with Government Flag
         if (holidayRepository.count() == 0) {
             List<Holiday> holidays = List.of(
-                    Holiday.builder().name("New Year's Day").holidayDate(LocalDate.of(2026, 1, 1)).dayOfWeek("Thursday").holidayType("National Holiday").description("Celebration of the New Year").build(),
-                    Holiday.builder().name("Republic Day").holidayDate(LocalDate.of(2026, 1, 26)).dayOfWeek("Monday").holidayType("National Holiday").description("Honoring the Constitution of India").build(),
-                    Holiday.builder().name("Maha Shivratri").holidayDate(LocalDate.of(2026, 2, 17)).dayOfWeek("Tuesday").holidayType("Festival").description("Spiritual observance").build(),
-                    Holiday.builder().name("Holi (Festival of Colors)").holidayDate(LocalDate.of(2026, 3, 4)).dayOfWeek("Wednesday").holidayType("Festival").description("Celebration of colors and spring").build(),
-                    Holiday.builder().name("Good Friday").holidayDate(LocalDate.of(2026, 4, 3)).dayOfWeek("Friday").holidayType("National Holiday").description("Christian remembrance").build(),
-                    Holiday.builder().name("Eid ul-Fitr").holidayDate(LocalDate.of(2026, 3, 20)).dayOfWeek("Friday").holidayType("Festival").description("End of Ramadan").build(),
-                    Holiday.builder().name("Independence Day").holidayDate(LocalDate.of(2026, 8, 15)).dayOfWeek("Saturday").holidayType("National Holiday").description("Commemoration of Nation's Independence").build(),
-                    Holiday.builder().name("Gandhi Jayanti").holidayDate(LocalDate.of(2026, 10, 2)).dayOfWeek("Friday").holidayType("National Holiday").description("Birth anniversary of Mahatma Gandhi").build(),
-                    Holiday.builder().name("Dussehra (Vijayadashami)").holidayDate(LocalDate.of(2026, 10, 20)).dayOfWeek("Tuesday").holidayType("Festival").description("Triumph of good over evil").build(),
-                    Holiday.builder().name("Diwali (Deepavali)").holidayDate(LocalDate.of(2026, 11, 8)).dayOfWeek("Sunday").holidayType("Festival").description("Festival of Lights").build(),
-                    Holiday.builder().name("Christmas Day").holidayDate(LocalDate.of(2026, 12, 25)).dayOfWeek("Friday").holidayType("National Holiday").description("Celebration of Christmas").build()
+                    Holiday.builder().name("New Year's Day").holidayDate(LocalDate.of(2026, 1, 1)).dayOfWeek("Thursday").holidayType("National Holiday").isGovernmentHoliday(true).description("Celebration of the New Year").build(),
+                    Holiday.builder().name("Republic Day").holidayDate(LocalDate.of(2026, 1, 26)).dayOfWeek("Monday").holidayType("National Holiday").isGovernmentHoliday(true).description("Honoring the Constitution of India").build(),
+                    Holiday.builder().name("Maha Shivratri").holidayDate(LocalDate.of(2026, 2, 17)).dayOfWeek("Tuesday").holidayType("Festival").isGovernmentHoliday(false).description("Spiritual observance").build(),
+                    Holiday.builder().name("Holi (Festival of Colors)").holidayDate(LocalDate.of(2026, 3, 4)).dayOfWeek("Wednesday").holidayType("Festival").isGovernmentHoliday(false).description("Celebration of colors and spring").build(),
+                    Holiday.builder().name("Good Friday").holidayDate(LocalDate.of(2026, 4, 3)).dayOfWeek("Friday").holidayType("National Holiday").isGovernmentHoliday(true).description("Christian remembrance").build(),
+                    Holiday.builder().name("Eid ul-Fitr").holidayDate(LocalDate.of(2026, 3, 20)).dayOfWeek("Friday").holidayType("Festival").isGovernmentHoliday(false).description("End of Ramadan").build(),
+                    Holiday.builder().name("Independence Day").holidayDate(LocalDate.of(2026, 8, 15)).dayOfWeek("Saturday").holidayType("National Holiday").isGovernmentHoliday(true).description("Commemoration of Nation's Independence").build(),
+                    Holiday.builder().name("Gandhi Jayanti").holidayDate(LocalDate.of(2026, 10, 2)).dayOfWeek("Friday").holidayType("National Holiday").isGovernmentHoliday(true).description("Birth anniversary of Mahatma Gandhi").build(),
+                    Holiday.builder().name("Dussehra (Vijayadashami)").holidayDate(LocalDate.of(2026, 10, 20)).dayOfWeek("Tuesday").holidayType("Festival").isGovernmentHoliday(false).description("Triumph of good over evil").build(),
+                    Holiday.builder().name("Diwali (Deepavali)").holidayDate(LocalDate.of(2026, 11, 8)).dayOfWeek("Sunday").holidayType("Festival").isGovernmentHoliday(false).description("Festival of Lights").build(),
+                    Holiday.builder().name("Christmas Day").holidayDate(LocalDate.of(2026, 12, 25)).dayOfWeek("Friday").holidayType("National Holiday").isGovernmentHoliday(true).description("Celebration of Christmas").build()
             );
             holidayRepository.saveAll(holidays);
             log.info("Seeded {} Company Holidays for 2026", holidays.size());
+        } else {
+            // Update government holiday flags for existing records
+            holidayRepository.findAll().forEach(h -> {
+                if ("National Holiday".equalsIgnoreCase(h.getHolidayType()) && !Boolean.TRUE.equals(h.getIsGovernmentHoliday())) {
+                    h.setIsGovernmentHoliday(true);
+                    holidayRepository.save(h);
+                }
+            });
         }
     }
 }

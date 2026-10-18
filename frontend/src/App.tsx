@@ -166,7 +166,7 @@ export function App() {
 
             {activeTab === 'LEAVE' && <LeaveTab currentUser={currentUser} />}
 
-            {activeTab === 'HOLIDAYS' && <HolidayTab />}
+            {activeTab === 'HOLIDAYS' && <HolidayTab currentUser={currentUser} />}
 
             {activeTab === 'APPROVALS' && isManagerOrAdmin && (
               <ManagerApprovalsTab currentUser={currentUser} />

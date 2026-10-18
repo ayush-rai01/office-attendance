@@ -76,4 +76,6 @@ export interface Holiday {
   dayOfWeek: string;
   holidayType: string;
   description?: string;
+  isGovernmentHoliday?: boolean;
 }
+

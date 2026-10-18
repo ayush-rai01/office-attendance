@@ -26,7 +26,11 @@ public class Holiday {
 
     private String dayOfWeek;
 
-    private String holidayType; // "National Holiday", "Festival", "Company Holiday"
+    private String holidayType; // "National Holiday", "Festival", "Company Holiday", "Optional Holiday"
 
     private String description;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isGovernmentHoliday = false; // Govt/National holidays cannot be altered
 }

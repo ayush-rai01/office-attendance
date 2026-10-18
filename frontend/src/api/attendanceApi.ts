@@ -85,6 +85,11 @@ export const attendanceApi = {
     return res.data;
   },
 
+  updateOffice: async (id: number, data: Partial<Office>): Promise<Office> => {
+    const res = await api.put<Office>(`/offices/${id}`, data);
+    return res.data;
+  },
+
   // Holidays
   getAllHolidays: async (): Promise<Holiday[]> => {
     const res = await api.get<Holiday[]>('/holidays');

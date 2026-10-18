@@ -31,4 +31,11 @@ public class OfficeController {
     public ResponseEntity<Office> getOfficeById(@PathVariable Long id) {
         return ResponseEntity.ok(officeService.getOfficeById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Office> updateOffice(
+            @PathVariable Long id,
+            @RequestBody CreateOfficeRequest request) {
+        return ResponseEntity.ok(officeService.updateOffice(id, request));
+    }
 }

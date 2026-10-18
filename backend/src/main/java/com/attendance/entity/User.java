@@ -32,7 +32,7 @@ public class User {
     private String department;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private Role role; // EMPLOYEE, REPORTING_MANAGER, PRINCIPAL_LEAD, ADMIN
 
     @ManyToOne(fetch = FetchType.EAGER)

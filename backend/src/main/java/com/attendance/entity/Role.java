@@ -4,5 +4,6 @@ public enum Role {
     EMPLOYEE,
     REPORTING_MANAGER,
     PRINCIPAL_LEAD,
-    ADMIN
+    ADMIN,
+    MANAGER
 }
